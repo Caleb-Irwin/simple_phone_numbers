@@ -42,13 +42,17 @@ let send = () => {
   if (msg.length !== 0) {
     mm.sendMessage(
       msg,
-      navigator.userAgent,
+      // @ts-expect-error
+      document.getElementById("data").value,
       // @ts-expect-error
       document.getElementById("userName").value
     );
+
+    // @ts-expect-error
+    document.getElementById("message").value = "";
+    // @ts-expect-error
+    document.getElementById("data").value = "";
   }
-  // @ts-expect-error
-  document.getElementById("message").value = "";
 };
 
 document.getElementById("send").addEventListener("click", send);
@@ -68,6 +72,12 @@ document.getElementById("devMode").addEventListener("click", () => {
 });
 
 document.getElementById("message").addEventListener("keypress", (event) => {
+  if (event.code === "Enter") {
+    send();
+  }
+});
+
+document.getElementById("data").addEventListener("keypress", (event) => {
   if (event.code === "Enter") {
     send();
   }
