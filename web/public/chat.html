@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Chat</title>
+    <title>Simple Chat (For Simple Phone Numbers)</title>
     <style>
       html {
         display: flex;
@@ -87,7 +87,10 @@
   </head>
   <body id="body">
     <div id="content">
-      <h1>Simple Chat</h1>
+      <h1 style="margin-bottom: 1px">Simple Chat</h1>
+      <p style="margin-top: 1px">
+        For <a style="color: #222222" href="/">Simple Phone Numbers</a>
+      </p>
       <p id="user">Not Signed In</p>
 
       <input
@@ -134,6 +137,6 @@
         class="hvr-border-fade active-invert"
       />
     </div>
-    <script src="../ts/index.ts" type="module" defer></script>
+    <script src="../ts/chat.ts" type="module" defer></script>
   </body>
 </html>
