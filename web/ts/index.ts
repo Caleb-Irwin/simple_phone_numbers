@@ -1,4 +1,7 @@
 import Vue from "vue/dist/vue.js";
+import { message } from "../../server/socketTypes";
+import msgManager from "./message";
+
 let app = new Vue({
   el: "#app",
   data: {
@@ -18,14 +21,27 @@ let app = new Vue({
     sideOfStreet: "even",
     showInstructions: false,
     nsw: "",
+    mm: undefined,
+    publicId: "Not Connected",
   },
   methods: {
     get: function () {
       if (!this.isLoading) {
         for (let street in this.streets) {
           if (this.streets[street].state != "resolved") {
-            // @ts-expect-error
-            getDoc(street, this.city, this.province);
+            this.mm.sendMessage(
+              `Do we have: ${street}, ${this.city}, ${this.province}`,
+              JSON.stringify({
+                street,
+                city: this.city,
+                province: this.province,
+              })
+            );
+            setTimeout(() => {
+              this.streets[street].state = "timeout";
+              console.log("timeout of " + street);
+              this.setIsLoading();
+            }, 45000);
             this.streets[street].state = "pending";
           }
         }
@@ -41,15 +57,19 @@ let app = new Vue({
       this.$forceUpdate();
       this.setIsLoading();
     },
-    write: function (street, data) {
+    write: function (street, local, data) {
       console.log(street, data);
-      if (data === "failed") {
-        this.streets[street].state = "failed";
+      if (this.streets[street] && local === `${this.city}-${this.province}`) {
+        if (data === "failed") {
+          this.streets[street].state = "failed";
+        } else {
+          (this.streets[street].data = data),
+            (this.streets[street].state = "resolved");
+        }
+        this.setIsLoading();
       } else {
-        (this.streets[street].data = data),
-          (this.streets[street].state = "resolved");
+        console.log("Street Not Applicable");
       }
-      this.setIsLoading();
     },
     setIsLoading: function () {
       let output = false;
@@ -187,5 +207,28 @@ let app = new Vue({
         }, 1000);
       }, 10);
     },
+    onMessage: function (newMessage: message) {
+      console.log(newMessage.message, newMessage.data);
+      if (
+        newMessage.senderType === "cached-store" ||
+        newMessage.senderType === "street-getter"
+      ) {
+        let data = JSON.parse(newMessage.data);
+        this.write(data.street, data.local, data.data);
+      }
+      if (newMessage.senderType === "open-street-getter") {
+        window.open(newMessage.data);
+      }
+    },
+  },
+  created: function () {
+    console.log("created!");
+    this.mm = new msgManager({
+      defaultSenderType: "finder-ui",
+      onMessage: this.onMessage,
+      onAuth: (uuid, color, publicId) => {
+        this.publicId = publicId;
+      },
+    });
   },
 });

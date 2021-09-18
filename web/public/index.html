@@ -257,7 +257,7 @@
               <div></div>
               <div></div>
             </div>
-            <div v-if="!isLoading">Update Spreadsheet</div>
+            <div v-if="!isLoading">Update Spreadsheet [ID: {{publicId}}]</div>
           </h3>
           <h3
             @click="print()"
@@ -316,27 +316,6 @@
         </tr>
       </table>
     </div>
-
-    <script>
-      function getDoc(s, c, p) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState == 4 && this.status == 200) {
-            app.write(s, JSON.parse(this.responseText));
-          } else {
-            app.write(s, "failed");
-          }
-        };
-        xhttp.open(
-          "GET",
-          "http://" +
-            window.location.host +
-            `/getData?street=${s}&province=${p}&city=${c}`,
-          true
-        );
-        xhttp.send();
-      }
-    </script>
     <script src="../ts/index.ts" type="module"></script>
   </body>
 </html>
