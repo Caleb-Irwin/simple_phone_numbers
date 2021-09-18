@@ -14,6 +14,7 @@ interface config {
   uuid?: string;
   storeMessages?: number;
   defaultSenderType?: string;
+  doNotTriggerOnMessageOnLoad?: boolean;
 }
 
 export default class MessageManagerMaker {
@@ -41,6 +42,7 @@ export default class MessageManagerMaker {
       this.shortenMsgCache();
 
       conf.onMessage &&
+        !conf.doNotTriggerOnMessageOnLoad &&
         this.messages.forEach((msg) => this.conf.onMessage(msg));
     });
 
