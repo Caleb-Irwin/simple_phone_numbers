@@ -23,6 +23,7 @@ let app = new Vue({
     nsw: "",
     mm: undefined,
     publicId: "Not Connected",
+    useCached: true,
   },
   methods: {
     get: function () {
@@ -35,6 +36,7 @@ let app = new Vue({
                 street,
                 city: this.city,
                 province: this.province,
+                useCache: this.useCached,
               })
             );
             setTimeout(() => {
@@ -216,7 +218,7 @@ let app = new Vue({
         let data = JSON.parse(newMessage.data);
         this.write(data.street, data.local, data.data);
       }
-      if (newMessage.senderType === "open-street-getter") {
+      if (newMessage.senderType === "open-tab") {
         window.open(newMessage.data);
       }
     },
@@ -229,6 +231,7 @@ let app = new Vue({
       onAuth: (uuid, color, publicId) => {
         this.publicId = publicId;
       },
+      doNotTriggerOnMessageOnLoad: true,
     });
   },
 });

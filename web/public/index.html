@@ -257,7 +257,10 @@
               <div></div>
               <div></div>
             </div>
-            <div v-if="!isLoading">Update Spreadsheet [ID: {{publicId}}]</div>
+            <div v-if="!isLoading">
+              Update Spreadsheet [ID: {{publicId}}] Use Cached
+              <input type="checkbox" v-model="useCached" />
+            </div>
           </h3>
           <h3
             @click="print()"
