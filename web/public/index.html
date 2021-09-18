@@ -5,112 +5,17 @@
       href="https://fonts.googleapis.com/css?family=Cutive Mono"
       rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="./index.css" />
     <title>Phone Number Finder</title>
-    <style>
-      body {
-        font-family: "Cutive Mono";
-      }
-      button {
-        font-family: "Cutive Mono";
-        border-color: black;
-        border-width: 1px;
-        background: none;
-        border-style: solid;
-        padding: 5px;
-        margin: 3px;
-      }
-      button:hover {
-        background-color: black;
-        color: white;
-        cursor: pointer;
-      }
-      button:active {
-        background-color: rgb(32, 32, 32);
-      }
-      input {
-        font-family: "Cutive Mono";
-        padding: 5px;
-      }
-      table,
-      th,
-      td {
-        border: 1px solid black;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        padding: 5px;
-      }
-      .parent {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .lds-ellipsis {
-        display: inline-block;
-        position: relative;
-        width: 80px;
-        height: 40px;
-      }
-      .lds-ellipsis div {
-        position: absolute;
-        top: 13px;
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
-        background: black;
-        animation-timing-function: cubic-bezier(0, 1, 1, 0);
-      }
-      .lds-ellipsis div:nth-child(1) {
-        left: 8px;
-        animation: lds-ellipsis1 0.6s infinite;
-      }
-      .lds-ellipsis div:nth-child(2) {
-        left: 8px;
-        animation: lds-ellipsis2 0.6s infinite;
-      }
-      .lds-ellipsis div:nth-child(3) {
-        left: 32px;
-        animation: lds-ellipsis2 0.6s infinite;
-      }
-      .lds-ellipsis div:nth-child(4) {
-        left: 56px;
-        animation: lds-ellipsis3 0.6s infinite;
-      }
-      @keyframes lds-ellipsis1 {
-        0% {
-          transform: scale(0);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      @keyframes lds-ellipsis3 {
-        0% {
-          transform: scale(1);
-        }
-        100% {
-          transform: scale(0);
-        }
-      }
-      @keyframes lds-ellipsis2 {
-        0% {
-          transform: translate(0, 0);
-        }
-        100% {
-          transform: translate(24px, 0);
-        }
-      }
-    </style>
   </head>
   <body>
     <div id="app">
       <section class="parent">
         <section v-if="!printMode" style="display: inline-block; width: 50%">
-          <h1 style="text-align: center; font-size: 30px">
-            Phone Number Finder
+          <h1 style="text-align: center; font-size: 30px; margin-bottom: 0px">
+            Simple Phone Numbers
           </h1>
+          <p style="text-align: center; margin-top: 0px">By Caleb Irwin</p>
           <h3
             @click="showInstructions = !showInstructions"
             style="
@@ -126,9 +31,14 @@
               margin-top: 5px;
             "
           >
-            Show/Hide Instructions
+            Toggle More Information
           </h3>
-          <div v-if="showInstructions"><p>Coming Soon</p></div>
+          <div v-if="showInstructions">
+            <p>Hi from Caleb!</p>
+            <a href="./chat.html" target="_blank" rel="noopener noreferrer"
+              >Simple Chat (For debug, opens in new tab)</a
+            >
+          </div>
           <div
             style="
               margin: 5px;
@@ -427,196 +337,6 @@
         xhttp.send();
       }
     </script>
-    <script>
-      let app = new Vue({
-        el: "#app",
-        data: {
-          city: "Humboldt",
-          province: "SK",
-          street: "1th Street",
-          streets: {},
-          isLoading: false,
-          ruleType: "range",
-          dnc: undefined,
-          rangeStart: undefined,
-          rangeEnd: undefined,
-          filtered: undefined,
-          printMode: false,
-          title: "Territory",
-          subTitle: "Locality: Humboldt - Number: X ",
-          sideOfStreet: "even",
-          showInstructions: false,
-          nsw: "",
-        },
-        methods: {
-          get: function () {
-            if (!this.isLoading) {
-              for (let street in this.streets) {
-                if (this.streets[street].state != "resolved") {
-                  getDoc(street, this.city, this.province);
-                  this.streets[street].state = "pending";
-                }
-              }
-              this.setIsLoading();
-            }
-          },
-          addStreet: function () {
-            this.streets[this.street] = {
-              state: "not checked",
-              street: this.street,
-              rules: [],
-            };
-            this.$forceUpdate();
-            this.setIsLoading();
-          },
-          write: function (street, data) {
-            console.log(street, data);
-            if (data === "failed") {
-              this.streets[street].state = "failed";
-            } else {
-              (this.streets[street].data = data),
-                (this.streets[street].state = "resolved");
-            }
-            this.setIsLoading();
-          },
-          setIsLoading: function () {
-            let output = false;
-            console.log("checking...");
-            for (let x in this.streets) {
-              if (this.streets[x].state == "pending") {
-                output = true;
-                break;
-              }
-            }
-            this.filter();
-            this.isLoading = output;
-          },
-          addRule: function (where) {
-            let rule = { ruleType: this.ruleType };
-            if (this.ruleType == "dnc") {
-              rule.dnc = parseInt(this.dnc);
-            } else if (this.ruleType === "nsw") {
-              rule.nsw = parseInt(this.nsw);
-            } else if (this.ruleType == "range") {
-              (rule.start = parseInt(this.rangeStart)),
-                (rule.end = parseInt(this.rangeEnd));
-            } else if (this.ruleType == "Even/Odd") {
-              rule.evenOdd = this.sideOfStreet;
-            }
-            this.streets[where].rules.push(rule);
-            this.$forceUpdate();
-          },
-          filter: function () {
-            function getHouseNumber(full) {
-              return parseInt(full.split(" ")[0]);
-            }
-            console.log("filtering");
-            let out = [];
-            for (let streetId in this.streets) {
-              const street = this.streets[streetId];
-              if (street.rules.length == 0) {
-                continue;
-              }
-              let houseNumbers = [];
-              for (let ruleId in street.rules) {
-                let rule = street.rules[ruleId];
-                if (rule.ruleType == "all") {
-                  for (let i in street.data) {
-                    houseNumbers.push(getHouseNumber(street.data[i].address));
-                  }
-                }
-              }
-              function getPhoneNumber(hn) {
-                let r = undefined;
-                street.data.forEach((element) => {
-                  if (getHouseNumber(element.address) == hn) {
-                    r = element.phone.replace(/\D/g, "");
-                  }
-                });
-                return r;
-              }
-              for (let ruleId in street.rules) {
-                let rule = street.rules[ruleId];
-                if (rule.ruleType == "range") {
-                  while (houseNumbers.length > 0) {
-                    houseNumbers.pop();
-                  }
-                  for (let i in street.data) {
-                    let houseNumber = getHouseNumber(street.data[i].address);
-                    if (rule.start <= houseNumber && houseNumber < rule.end) {
-                      houseNumbers.push(houseNumber);
-                    }
-                  }
-                }
-              }
-              for (let ruleId in street.rules) {
-                let rule = street.rules[ruleId];
-                if (rule.ruleType == "dnc") {
-                  let output = [];
-                  for (let i in houseNumbers) {
-                    if (houseNumbers[i] != rule.dnc) {
-                      output.push(houseNumbers[i]);
-                    }
-                  }
-                  houseNumbers = output;
-                }
-              }
-              for (let ruleId in street.rules) {
-                let rule = street.rules[ruleId];
-                if (rule.ruleType == "Even/Odd") {
-                  let output = [];
-                  for (let i in houseNumbers) {
-                    if (
-                      (houseNumbers[i] % 2 == 0 && rule.evenOdd == "even") ||
-                      (houseNumbers[i] % 2 == 1 && rule.evenOdd == "odd")
-                    ) {
-                      console.log("isTrue");
-                      output.push(houseNumbers[i]);
-                    }
-                  }
-                  houseNumbers = output;
-                }
-              }
-              for (let ruleId in street.rules) {
-                let rule = street.rules[ruleId];
-                if (rule.ruleType == "nsw") {
-                  let output = [];
-                  for (let i in houseNumbers) {
-                    try {
-                      console.log(houseNumbers[i]);
-                      const pn = getPhoneNumber(houseNumbers[i]);
-                      console.log(pn);
-                      if (pn.startsWith(rule.nsw)) {
-                        output.push(houseNumbers[i]);
-                      }
-                    } catch (e) {}
-                  }
-                  houseNumbers = output;
-                }
-              }
-              console.log(houseNumbers);
-              for (let i in street.data) {
-                let houseNumber = getHouseNumber(street.data[i].address);
-                if (houseNumbers.includes(houseNumber)) {
-                  out.push(street.data[i]);
-                }
-              }
-            }
-            console.log(out);
-            this.filtered = out;
-            return out;
-          },
-          print: function () {
-            this.printMode = true;
-            setTimeout(() => {
-              window.print();
-              setTimeout(() => {
-                this.printMode = false;
-              }, 1000);
-            }, 10);
-          },
-        },
-      });
-    </script>
+    <script src="../ts/index.ts" type="module"></script>
   </body>
 </html>
