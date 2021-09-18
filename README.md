@@ -1,5 +1,7 @@
-# Simple Chat
-A very simple real-time chat site. 
+# Simple Phone Numbers
+A simple phone number finder. First Commit is taken from [Caleb-Irwin/simple_chat](https://github.com/Caleb-Irwin/simple_chat) from [this commit](https://github.com/Caleb-Irwin/simple_chat/tree/8de1a835860a005f3c6829f7009c3c74301e2c96)
+
+## TODO! Update readme from Simple Chat!
 
 ## Why did I make this?
 I made this to be an information relay for another project, specifically for the server and /web/ts/message.ts.
