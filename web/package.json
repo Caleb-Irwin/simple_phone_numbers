@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel watch ./public/index.html ./public/finder.html --hmr-port 1234",
-    "build": "parcel build ./public/index.html ./public/finder.html"
+    "dev": "parcel watch ./public/index.html ./public/chat.html --hmr-port 1234",
+    "build": "parcel build ./public/index.html ./public/chat.html"
   },
   "author": "Caleb Irwin (me @ calebirwin.ca)",
   "license": "ISC",
