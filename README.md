@@ -1,5 +1,5 @@
 # Simple Phone Numbers
-A simple phone number finder. First Commit is taken from [Caleb-Irwin/simple_chat](https://github.com/Caleb-Irwin/simple_chat) from [this commit](https://github.com/Caleb-Irwin/simple_chat/tree/8de1a835860a005f3c6829f7009c3c74301e2c96)
+Find phone numbers by physical location.
 
 ## Features
 - Find phone numbers street
@@ -19,7 +19,7 @@ A simple phone number finder. First Commit is taken from [Caleb-Irwin/simple_cha
 - Typescript
 
 ## Should I use this?
-Maybe. Probably not. Why? It's complex to set up. If you are tech-savvy, you should be able to set it up. Also adding features will be a pain as the code base is kinda a massive mess. Why? First code quality was not a priority. Secondly, and more importantly, this is a combination of two projects; The original phone number 'program', which we took index.html from, and simple_chat, for the server and message.ts.
+Maybe. Probably not. Why? It's complex to set up. If you are tech-savvy, you should be able to set it up. Also adding features will be a pain as the code base is kinda a massive mess. Why? First code quality was not a priority. Secondly, and more importantly, this is a combination of two projects; The original phone number 'program', which I took index.html from, and from  [Caleb-Irwin/simple_chat](https://github.com/Caleb-Irwin/simple_chat) with which this was built off of (from [this commit](https://github.com/Caleb-Irwin/simple_chat/tree/8de1a835860a005f3c6829f7009c3c74301e2c96)).
 
 ## Why and How UserScript?
 Originally this project used Puppeteer, but basically, after some time canada411 started to not like it (it stopped working), so UserScripts made sense as the next step. In your browser, you need to install an extension for UserScripts to run in. I would recommend Tampermonkey.
