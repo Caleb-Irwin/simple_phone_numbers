@@ -40,9 +40,11 @@ let app = new Vue({
               })
             );
             setTimeout(() => {
-              this.streets[street].state = "timeout";
-              console.log("timeout of " + street);
-              this.setIsLoading();
+              if (this.streets[street].state !== "resolved") {
+                this.streets[street].state = "timeout";
+                console.log("timeout of " + street);
+                this.setIsLoading();
+              }
             }, 45000);
             this.streets[street].state = "pending";
           }
