@@ -48,6 +48,7 @@
     })
       .then(() => {
         console.log("Success");
+        window.close();
       })
       .catch((error) => {
         console.error("Error:", error);
