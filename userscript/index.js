@@ -15,7 +15,7 @@
   "use strict";
   // Your code here...
   // fetch({})
-  if (location.hash === "#auto") {
+  if (location.hash.startsWith("#auto")) {
     let output = [];
     let i = 0;
     while (true) {
@@ -37,7 +37,11 @@
     console.log("trying to fetch!");
     fetch("http://localhost:8080/api/street", {
       method: "POST",
-      body: JSON.stringify(output),
+      body: JSON.stringify({
+        street: decodeURIComponent(location.hash.split(":")[1]),
+        local: decodeURIComponent(location.hash.split(":")[2]),
+        data: output,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
