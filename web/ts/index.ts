@@ -211,10 +211,7 @@ let app = new Vue({
     },
     onMessage: function (newMessage: message) {
       console.log(newMessage.message, newMessage.data);
-      if (
-        newMessage.senderType === "cached-store" ||
-        newMessage.senderType === "street-getter"
-      ) {
+      if (newMessage.senderType === "finder-server") {
         let data = JSON.parse(newMessage.data);
         this.write(data.street, data.local, data.data);
       }

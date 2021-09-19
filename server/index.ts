@@ -3,6 +3,7 @@ import express from "express";
 import { v4 } from "uuid";
 import { Server } from "socket.io";
 import compression from "compression";
+import cors from "cors";
 
 import {
   msgCreate,
@@ -32,9 +33,27 @@ let state: stateInterface = {
 app.use(compression());
 app.use(express.static("../web/dist/"));
 app.use(express.json());
+app.use(cors());
 
 app.get("/api/messages", (req, res) => {
   res.send(JSON.stringify(state.messages));
+});
+
+app.post("/api/street/", (req, res) => {
+  console.log(`Got street: ${req.body.street}`);
+  res.sendStatus(200);
+  let newMessage: message = {
+    message: "Got street: " + req.body.street,
+    data: JSON.stringify(req.body),
+    publicId: "finder-server",
+    senderType: "finder-server",
+    color: "ffffff",
+  };
+  state.messages.push(newMessage);
+  if (state.messages.length > 16) {
+    state.messages.shift();
+  }
+  io.emit("msg:receive", newMessage);
 });
 
 const io = new Server(server);
@@ -45,7 +64,7 @@ io.on("connection", (socket) => {
 
   function sendError(text: string) {
     let msg: message = {
-      color: "000000",
+      color: "ffffff",
       message: "Error! " + text,
       publicId: "server!",
       senderType: "Server",
@@ -125,6 +144,32 @@ io.on("connection", (socket) => {
       state.messages.shift();
     }
     io.emit("msg:receive", newMessage);
+
+    // New For Simple Phone Numbers
+    if (newMessage.senderType === "finder-ui") {
+      let data: {
+        street: string;
+        city: string;
+        province: string;
+        useCache: boolean;
+      } = JSON.parse(newMessage.data);
+      console.log(data);
+      if (data.useCache) {
+        console.log("TODO: add cache");
+      }
+      let openTabMessage: message = {
+        color: "ffffff",
+        senderType: "open-tab",
+        message: `Open New Tab (${data.street})`,
+        publicId: "finder-server",
+        data: `https://canada411.ca/search/?stype=si&where=${data.street}+${data.city}+${data.province}&pgLen=1000#auto:${data.street}:${data.city}-${data.province}`,
+      };
+      state.messages.push(openTabMessage);
+      if (state.messages.length > 16) {
+        state.messages.shift();
+      }
+      socket.emit("msg:receive", openTabMessage);
+    }
   });
 
   socket.on("disconnect", () => {
