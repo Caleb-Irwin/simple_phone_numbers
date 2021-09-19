@@ -1,5 +1,5 @@
 import { createServer } from "http";
-import express from "express";
+import express, { json } from "express";
 import { v4 } from "uuid";
 import { Server } from "socket.io";
 import compression from "compression";
@@ -30,6 +30,8 @@ let state: stateInterface = {
   messages: [],
 };
 
+let cache: { [streetLocal: string]: message } = {};
+
 app.use(compression());
 app.use(express.static("../web/dist/"));
 app.use(express.json());
@@ -54,6 +56,7 @@ app.post("/api/street/", (req, res) => {
     state.messages.shift();
   }
   io.emit("msg:receive", newMessage);
+  cache[`${req.body.street}-${req.body.local}`] = newMessage;
 });
 
 const io = new Server(server);
@@ -154,21 +157,33 @@ io.on("connection", (socket) => {
         useCache: boolean;
       } = JSON.parse(newMessage.data);
       console.log(data);
-      if (data.useCache) {
-        console.log("TODO: add cache");
+      if (
+        data.useCache &&
+        cache[`${data.street}-${data.city}-${data.province}`]
+      ) {
+        console.log("In Cache! " + data.street);
+        let newMessage = cache[`${data.street}-${data.city}-${data.province}`];
+        state.messages.push(newMessage);
+        if (state.messages.length > 16) {
+          state.messages.shift();
+        }
+        io.emit("msg:receive", newMessage);
+      } else {
+        console.log("Not In Cache! " + data.street);
+
+        let openTabMessage: message = {
+          color: "ffffff",
+          senderType: "open-tab",
+          message: `Open New Tab (${data.street})`,
+          publicId: "finder-server",
+          data: `https://canada411.ca/search/?stype=si&where=${data.street}+${data.city}+${data.province}&pgLen=1000#auto:${data.street}:${data.city}-${data.province}`,
+        };
+        state.messages.push(openTabMessage);
+        if (state.messages.length > 16) {
+          state.messages.shift();
+        }
+        socket.emit("msg:receive", openTabMessage);
       }
-      let openTabMessage: message = {
-        color: "ffffff",
-        senderType: "open-tab",
-        message: `Open New Tab (${data.street})`,
-        publicId: "finder-server",
-        data: `https://canada411.ca/search/?stype=si&where=${data.street}+${data.city}+${data.province}&pgLen=1000#auto:${data.street}:${data.city}-${data.province}`,
-      };
-      state.messages.push(openTabMessage);
-      if (state.messages.length > 16) {
-        state.messages.shift();
-      }
-      socket.emit("msg:receive", openTabMessage);
     }
   });
 
