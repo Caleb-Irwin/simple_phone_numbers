@@ -217,7 +217,10 @@ let app = new Vue({
         let data = JSON.parse(newMessage.data);
         this.write(data.street, data.local, data.data);
       }
-      if (newMessage.senderType === "open-tab") {
+      if (
+        newMessage.senderType === "open-tab" &&
+        newMessage.publicId === "finder-server"
+      ) {
         window.open(newMessage.data);
       }
     },
